@@ -2,6 +2,15 @@ from tkinter import *
 from PIL import Image, ImageTk
 import webbrowser
 import pyttsx3
+from datetime import datetime
+
+def update_time():
+    # Get current time and format it
+    current_time = datetime.now().strftime("%H:%M:%S")
+    # Update the text on the canvas
+    canvas.itemconfig(time_text, text=current_time)
+    # Schedule the function to run again after 1000ms (1 second)
+    root.after(1000, update_time)
 
 def websites(website_name):
     website_urls = {
@@ -11,6 +20,7 @@ def websites(website_name):
         "FaceBook": "https://www.facebook.com/login.php/"
     }
     webbrowser.open(website_urls.get(website_name, "https://www.google.com"))  # Default to Google if not found
+
 
 root = Tk()
 root.title('My Application')
@@ -27,6 +37,13 @@ canvas.pack()
 # Place the robot image on the canvas
 canvas.create_image(650, 350, image=photo)  # Centered in the 1300x700 window
 
+# Get current time and format it
+current_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+# Add current time at the top center of the image
+time_text = canvas.create_text(650, 50, text="", font=('Arial', 20, 'bold'), fill='black')  # Top center
+update_time()  # Start the time update loop
+
 # Create a white square background for the text
 text_x, text_y = 727, 377  # Coordinates for the text
 square_size = 120  # Adjust this to change the size of the square
@@ -40,6 +57,11 @@ canvas.create_rectangle(
 
 # Place the "I am Narmina's slave" text on top of the square
 canvas.create_text(text_x, text_y, text="I am Narmina's slave", font=('Arial', 11, 'bold'), fill='black')
+
+# Add current time at the top of the image
+label_data = Label(root, text=current_time,
+                font = ('Arial', 20, 'bold'), fg='red',
+                   bg = 'black', image = photo, compound = 'bottom', anchor='w')
 
 # Add transparent buttons over the existing social media icons
 button_width = 60  # Approximate width of the icons
