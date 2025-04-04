@@ -11,49 +11,57 @@ def websites(website_name):
     }
     webbrowser.open(website_urls.get(website_name, "https://www.google.com"))  # Default to Google if not found
 
-
-def on_canvas_click(event):
-    x, y = event.x, event.y
-    # Define clickable regions based on where the icons are on the image
-    if 50 <= x <= 100 and 100 <= y <= 150:  # WhatsApp region
-        websites("WhatsApp")
-    elif 50 <= x <= 100 and 200 <= y <= 250:  # LinkedIn region
-        websites("LinkedIn")
-    elif 50 <= x <= 100 and 300 <= y <= 350:  # YouTube region
-        websites("YouTube")
-    elif 50 <= x <= 100 and 400 <= y <= 450:  # Facebook region
-        websites("FaceBook")
-
-
 root = Tk()
-root.title('my application')
+root.title('My Application')
 root.geometry("1300x700")
 
+# Load the robot image with the social media icons
 image = Image.open('my_robut.jpeg')
-
 photo = ImageTk.PhotoImage(image)
 
-# Create a Canvas widget to hold the image and text
-canvas = Canvas(root, width=image.width, height=image.height)
+# Create a canvas to place the image and text
+canvas = Canvas(root, width=1300, height=700, highlightthickness=0)
 canvas.pack()
 
-canvas.create_image(0, 0, anchor='nw', image=photo)
+# Place the robot image on the canvas
+canvas.create_image(650, 350, image=photo)  # Centered in the 1300x700 window
 
-# Add text with border effect on the chest of the robot
-text = "I am a robot"
-font = ('Arial', 20, 'bold')
-text_id = canvas.create_text(image.width//2, image.height//2, text=text, font=font, fill="yellow", anchor="center")
+# Create a white square background for the text
+text_x, text_y = 727, 377  # Coordinates for the text
+square_size = 120  # Adjust this to change the size of the square
+canvas.create_rectangle(
+    text_x - square_size // 2,  # Left edge
+    text_y - square_size // 2,  # Top edge
+    text_x + square_size // 2,  # Right edge
+    text_y + square_size // 2,  # Bottom edge
+    fill="white", outline="white"  # White fill with optional black border
+)
 
-canvas.create_text(image.width//2, image.height//2, text=text, font=font, fill="black", anchor="center", offset="-2,-2")
-canvas.create_text(image.width//2, image.height//2, text=text, font=font, fill="black", anchor="center", offset="2,-2")
-canvas.create_text(image.width//2, image.height//2, text=text, font=font, fill="black", anchor="center", offset="-2,2")
-canvas.create_text(image.width//2, image.height//2, text=text, font=font, fill="black", anchor="center", offset="2,2")
+# Place the "I am a robot" text on top of the square
+canvas.create_text(text_x, text_y, text="I am Narmina's robot", font=('Arial', 11, 'bold'), fill='black')
 
-# Create a Frame on the left side for website buttons
-frame = Frame(root)
-frame.pack(side=LEFT, padx=20)
+# Add transparent buttons over the existing social media icons
+button_width = 60  # Approximate width of the icons
+button_height = 60  # Approximate height of the icons
+
+# WhatsApp button (topmost icon)
+whatsapp_btn = Button(canvas, command=lambda: websites("WhatsApp"), bg='white', bd=0, highlightthickness=0)
+canvas.create_window(210, 120, window=whatsapp_btn, width=button_width, height=button_height)
+
+# LinkedIn button (second icon)
+linkedin_btn = Button(canvas, command=lambda: websites("LinkedIn"), bg='white', bd=0, highlightthickness=0)
+canvas.create_window(210, 260, window=linkedin_btn, width=button_width, height=button_height)
+
+# YouTube button (third icon)
+youtube_btn = Button(canvas, command=lambda: websites("YouTube"), bg='white', bd=0, highlightthickness=0)
+canvas.create_window(210, 400, window=youtube_btn, width=button_width, height=button_height)
+
+# Facebook button (bottom icon)
+facebook_btn = Button(canvas, command=lambda: websites("FaceBook"), bg='white', bd=0, highlightthickness=0)
+canvas.create_window(210, 540, window=facebook_btn, width=button_width, height=button_height)
+
+# Make the buttons transparent
+for btn in [whatsapp_btn, linkedin_btn, youtube_btn, facebook_btn]:
+    btn.configure(bg=root.cget("bg"), activebackground=root.cget("bg"))
 
 root.mainloop()
-
-
-###add the website urls to picture
