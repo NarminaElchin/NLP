@@ -1,6 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
 import webbrowser
+import pyttsx3
 
 def websites(website_name):
     website_urls = {
@@ -37,8 +38,8 @@ canvas.create_rectangle(
     fill="white", outline="white"  # White fill with optional black border
 )
 
-# Place the "I am a robot" text on top of the square
-canvas.create_text(text_x, text_y, text="I am Narmina's robot", font=('Arial', 11, 'bold'), fill='black')
+# Place the "I am Narmina's slave" text on top of the square
+canvas.create_text(text_x, text_y, text="I am Narmina's slave", font=('Arial', 11, 'bold'), fill='black')
 
 # Add transparent buttons over the existing social media icons
 button_width = 60  # Approximate width of the icons
@@ -63,5 +64,20 @@ canvas.create_window(210, 540, window=facebook_btn, width=button_width, height=b
 # Make the buttons transparent
 for btn in [whatsapp_btn, linkedin_btn, youtube_btn, facebook_btn]:
     btn.configure(bg=root.cget("bg"), activebackground=root.cget("bg"))
+
+# Start the pyttsx3 speech engine (moved here to run before mainloop)
+engine = pyttsx3.init()
+
+# Voice engine parameters
+engine.setProperty('rate', 150) # Speed (default 200)
+engine.setProperty('volume', 1) # Pitch (between 0.0 and 1.0)
+
+# We set the voice engines for speaking in different languages
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+
+root.update()  # Ensure the window is rendered before speaking
+engine.say("I am Narmina's slave")
+engine.runAndWait() # Speak the text after the image is displayed
 
 root.mainloop()
