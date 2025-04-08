@@ -1,0 +1,1 @@
+Moving from an Oracle-based DWH to a data lakehouse on Amazon S3 with the Iceberg format opens up a lot of flexibility in terms of scalability, performance, and cost-efficiency.

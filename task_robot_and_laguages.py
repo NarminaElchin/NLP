@@ -26,12 +26,12 @@ root = tk.Tk()
 root.title("Dil Məlumatı App")
 root.geometry("900x600")
 
-left_frame = Frame(root, width=300, height=600, bg="white")
-left_frame.pack(side="right", fill="y")
+left_frame = Frame(root, width=450, height=600, bg="white")
+left_frame.pack(side="left", fill="y")
 
 try:
-    robot_img = Image.open("robot.jpg")
-    robot_img = robot_img.resize((250, 350))
+    robot_img = Image.open("my_robot.jpg")
+    robot_img = robot_img.resize((300, 450))
     robot_img = ImageTk.PhotoImage(robot_img)
 except Exception as e:
     print("Robot şəkli tapılmadı:", e)
@@ -41,7 +41,7 @@ robot_label = Label(left_frame, image=robot_img, bg="white")
 robot_label.pack(padx=60,pady=110)
 
 right_frame = Frame(root, width=600, height=600, bg="white")
-right_frame.pack(side="right", fill="both", expand=True)
+right_frame.pack(side="left", fill="both", expand=True)
 
 flags = [
     ("Azerbaijan", "Azərbaycan dili", "azerbaijan.png"),
