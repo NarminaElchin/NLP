@@ -32,6 +32,10 @@ def speak_text():
     engine.say(text)  # Queue text to be spoken
     engine.runAndWait()  # Process the speech queue
 
+# Create a text entry in the Tkinter window
+text_entry = tk.Entry(root, width=40)
+text_entry.pack(pady=10)
+
 # Read text from file function
 def read_from_file():
     file_path = filedialog.askopenfilename(title="read_from_file", filetypes=[("Text files", "*.txt")])
@@ -40,10 +44,6 @@ if file_path:
         text = file.read()
     text_entry.delete(0, tk.END) # Clear the existing text field
     text_entry.insert(tk.END, text) # Insert the text read from the file
-
-# Create a text entry in the Tkinter window
-text_entry = tk.Entry(root, width=40)
-text_entry.pack(pady=10)
 
 # Create a button in the Tkinter window
 speak_button = tk.Button(root, text="Speak", command=speak_text)
