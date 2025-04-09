@@ -1,0 +1,99 @@
+import tkinter as tk
+from tkinter import *
+from PIL import Image, ImageTk
+import pyttsx3
+import webbrowser
+
+# Start the pyttsx3 speech engine
+engine = pyttsx3.init()
+
+def websites(website_name):
+    website_urls = {
+        "WhatsApp": "https://web.whatsapp.com/",
+        "LinkedIn": "https://www.linkedin.com/login",
+        "YouTube": "https://www.youtube.com/",
+        "FaceBook": "https://www.facebook.com/login.php/"
+    }
+    webbrowser.open(website_urls.get(website_name, "https://www.google.com"))  # Default to Google if not found
+
+text_to_speech = "Hello! I am your robot, speaking in English. Hola! Soy tu robot, hablando, en espanol. Bonjour. Je suis ton robot, parlant en français. Hallo! Ich bin dein Roboter, spreche auf Deutsch."
+
+# Speech function
+def speak_text():
+    engine.say(text_to_speech)  # Reads text
+    engine.runAndWait()  # Starts the speaker
+
+# Voice engine parameters
+engine.setProperty('rate', 150)  # Speed (default 200)
+engine.setProperty('volume', 1)  # Volume (between 0.0 and 1.0)
+
+root = tk.Tk()
+root.title("Midterm App")
+root.geometry("900x600")
+
+# Load and resize the background robot image
+bg_image = Image.open('my_robot.jpg')
+
+# Resize the image to fit the window size (900x600)
+bg_image_resized = bg_image.resize((900, 600), Image.Resampling.LANCZOS)
+bg_photo = ImageTk.PhotoImage(bg_image_resized)
+
+# Set the background image
+bg_label = Label(root, image=bg_photo)
+bg_label.place(x=0, y=0, relwidth=1, relheight=1)  # Cover entire window
+
+# Create a frame for the buttons on the left
+left_frame = Frame(root, bg='white', width=10, height=10)
+left_frame.pack(side=LEFT, fill=Y, padx=20, pady=20)
+
+# Create a frame for the buttons on the right
+right_frame = Frame(root, bg='white', width=450, height=600)
+right_frame.pack(side=RIGHT, fill=Y, padx=10, pady=10)
+
+# Load and resize social media logos (adjust size as needed)
+logo_size = (70, 70)  # Width, Height in pixels
+
+# WhatsApp
+whatsapp_frame = Frame(right_frame, bg='white')
+whatsapp_frame.pack(pady=5)  # 0 padding at top, 30 below
+whatsapp_img = Image.open('WhatsApp.jpg').resize(logo_size, Image.Resampling.LANCZOS)
+whatsapp_photo = ImageTk.PhotoImage(whatsapp_img)
+whatsapp_btn = Button(right_frame, image=whatsapp_photo, command=lambda: websites("WhatsApp"), borderwidth=0)
+whatsapp_btn.pack(pady=5)
+whatsapp_btn.image = whatsapp_photo  # Keep reference
+
+# LinkedIn
+linkedin_frame = Frame(right_frame, bg='white')
+linkedin_frame.pack(pady=5)  # 8 pixels above and below
+linkedin_img = Image.open('LinkedIn.jpg').resize(logo_size, Image.Resampling.LANCZOS)
+linkedin_photo = ImageTk.PhotoImage(linkedin_img)
+linkedin_btn = Button(right_frame, image=linkedin_photo, command=lambda: websites("LinkedIn"), borderwidth=0)
+linkedin_btn.pack(pady=5)
+linkedin_btn.image = linkedin_photo
+
+# YouTube
+youtube_frame = Frame(right_frame, bg='white')
+youtube_frame.pack(pady=5)
+youtube_img = Image.open('YouTube.jpg').resize(logo_size, Image.Resampling.LANCZOS)
+youtube_photo = ImageTk.PhotoImage(youtube_img)
+youtube_btn = Button(right_frame, image=youtube_photo, command=lambda: websites("YouTube"), borderwidth=0)
+youtube_btn.pack(pady=5)
+youtube_btn.image = youtube_photo
+
+# Facebook
+facebook_frame = Frame(right_frame, bg='white')
+facebook_frame.pack(pady=5)
+facebook_img = Image.open('FaceBook.jpg').resize(logo_size, Image.Resampling.LANCZOS)
+facebook_photo = ImageTk.PhotoImage(facebook_img)
+facebook_btn = Button(right_frame, image=facebook_photo, command=lambda: websites("FaceBook"), borderwidth=0)
+facebook_btn.pack(pady=5)
+facebook_btn.image = facebook_photo
+
+# Create the "Press me" button and center it
+Bttn = Button(root, text="Press me", command=speak_text, font=("Arial", 16))
+Bttn.place(relx=0.5, rely=0.5, anchor="center")  # Place the button at the center of the window
+
+# Keep reference to background image
+bg_label.image = bg_photo
+
+root.mainloop()
