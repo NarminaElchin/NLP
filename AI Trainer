@@ -1,0 +1,122 @@
+import cv2
+import numpy as np
+import tkinter as tk
+from tkinter import messagebox
+import os
+from datetime import datetime
+
+class AITrainer:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("AI Trainer - Image Annotation Tool")
+        self.root.geometry("400x300")
+
+        # Initialize webcam
+        self.cap = cv2.VideoCapture(0)
+        if not self.cap.isOpened():
+            messagebox.showerror("Error", "Cannot access webcam")
+            self.root.destroy()
+            return
+
+        # Directory to save images and annotations
+        self.save_dir = "ai_trainer_data"
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+        # Variables for annotation
+        self.current_image = None
+        self.label = tk.StringVar(value="object")
+        self.rect_start = None
+        self.rect_end = None
+        self.drawing = False
+        self.annotations = []
+
+        # GUI elements
+        tk.Label(root, text="Object Label:").pack(pady=5)
+        tk.Entry(root, textvariable=self.label).pack(pady=5)
+        tk.Button(root, text="Capture Image", command=self.capture_image).pack(pady=5)
+        tk.Button(root, text="Save Annotation", command=self.save_annotation).pack(pady=5)
+        tk.Button(root, text="Exit", command=self.exit).pack(pady=5)
+
+        # Start video feed
+        self.update_video()
+
+    def capture_image(self):
+        """Capture an image from the webcam."""
+        ret, frame = self.cap.read()
+        if ret:
+            self.current_image = frame.copy()
+            cv2.imshow("Captured Image", self.current_image)
+            cv2.setMouseCallback("Captured Image", self.draw_rectangle)
+
+    def draw_rectangle(self, event, x, y, flags, param):
+        """Handle mouse events for drawing bounding boxes."""
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.drawing = True
+            self.rect_start = (x, y)
+        elif event == cv2.EVENT_MOUSEMOVE and self.drawing:
+            self.rect_end = (x, y)
+            temp_img = self.current_image.copy()
+            cv2.rectangle(temp_img, self.rect_start, self.rect_end, (0, 255, 0), 2)
+            cv2.imshow("Captured Image", temp_img)
+        elif event == cv2.EVENT_LBUTTONUP:
+            self.drawing = False
+            self.rect_end = (x, y)
+            self.annotations.append({
+                "label": self.label.get(),
+                "bbox": [self.rect_start, self.rect_end]
+            })
+            cv2.rectangle(self.current_image, self.rect_start, self.rect_end, (0, 255, 0), 2)
+            cv2.imshow("Captured Image", self.current_image)
+
+    def preprocess_image(self, image):
+        """Apply basic preprocessing (e.g., grayscale)."""
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        return gray
+
+    def save_annotation(self):
+        """Save the captured image and annotations."""
+        if self.current_image is None:
+            messagebox.showwarning("Warning", "No image captured")
+            return
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        img_path = os.path.join(self.save_dir, f"image_{timestamp}.jpg")
+        anno_path = os.path.join(self.save_dir, f"anno_{timestamp}.txt")
+
+        # Save preprocessed image
+        preprocessed = self.preprocess_image(self.current_image)
+        cv2.imwrite(img_path, self.current_image)  # Save original for display
+        cv2.imwrite(os.path.join(self.save_dir, f"preprocessed_{timestamp}.jpg"), preprocessed)
+
+        # Save annotations
+        with open(anno_path, "w") as f:
+            for anno in self.annotations:
+                label = anno["label"]
+                (x1, y1), (x2, y2) = anno["bbox"]
+                f.write(f"{label},{x1},{y1},{x2},{y2}\n")
+
+        messagebox.showinfo("Success", f"Image and annotations saved to {img_path}")
+        self.annotations = []  # Reset annotations
+        cv2.destroyWindow("Captured Image")
+
+    def update_video(self):
+        """Update the live video feed."""
+        ret, frame = self.cap.read()
+        if ret:
+            cv2.imshow("Live Feed", frame)
+        self.root.after(10, self.update_video)
+
+    def exit(self):
+        """Clean up and exit."""
+        self.cap.release()
+        cv2.destroyAllWindows()
+        self.root.destroy()
+
+def main():
+    root = tk.Tk()
+    app = AITrainer(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
